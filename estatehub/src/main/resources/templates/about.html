@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('About Us')}"></head>
+<body class="eh-body">
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+<div class="page-hero-sm">
+  <div class="container">
+    <h1 class="page-hero-title">About EstateHub</h1>
+    <p class="text-muted">Gujarat's Premier Real Estate Platform</p>
+  </div>
+</div>
+
+<div class="container py-5">
+  <div class="row g-5 align-items-center mb-5">
+    <div class="col-lg-6">
+      <div class="section-eyebrow">Our Story</div>
+      <h2 class="section-title mb-4">Built for Gujarat's Real Estate Market</h2>
+      <p class="text-muted">EstateHub connects buyers and sellers across Gujarat's 5 major cities — Ahmedabad, Rajkot, Surat, Vadodara, and Bhavnagar — through a transparent, efficient digital platform.</p>
+      <p class="text-muted">From residential flats and villas to commercial offices and industrial warehouses, we cover every property category with verified listings and streamlined financing.</p>
+    </div>
+    <div class="col-lg-6">
+      <div class="row g-3">
+        <div class="col-6"><div class="about-stat"><div class="as-num">5</div><div class="as-label">Cities Covered</div></div></div>
+        <div class="col-6"><div class="about-stat"><div class="as-num">3</div><div class="as-label">Partner Banks</div></div></div>
+        <div class="col-6"><div class="about-stat"><div class="as-num">3</div><div class="as-label">Property Categories</div></div></div>
+        <div class="col-6"><div class="about-stat"><div class="as-num">1.5%</div><div class="as-label">Transparent Brokerage</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Team -->
+  <div class="section-header text-center mb-5">
+    <div class="section-eyebrow">Our Team</div>
+    <h2 class="section-title">The Administrators</h2>
+  </div>
+  <div class="row g-4 justify-content-center mb-5">
+    <div class="col-md-4">
+      <div class="team-card text-center">
+        <div class="team-avatar">S</div>
+        <h5 class="team-name mt-3">Saloni Gorsiya</h5>
+        <div class="team-role text-muted">Administrator</div>
+        <div class="team-contact text-muted small mt-2">
+          <i class="bi bi-telephone me-1"></i>9429769132<br/>
+          <i class="bi bi-envelope me-1"></i>sgorsiya@gmail.com
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="team-card text-center">
+        <div class="team-avatar">H</div>
+        <h5 class="team-name mt-3">Husain Aghariya</h5>
+        <div class="team-role text-muted">Administrator</div>
+        <div class="team-contact text-muted small mt-2">
+          <i class="bi bi-telephone me-1"></i>6353986953<br/>
+          <i class="bi bi-envelope me-1"></i>haghariya@gmail.com
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="team-card text-center">
+        <div class="team-avatar">N</div>
+        <h5 class="team-name mt-3">Naimish Gondaliya</h5>
+        <div class="team-role text-muted">Administrator</div>
+        <div class="team-contact text-muted small mt-2">
+          <i class="bi bi-telephone me-1"></i>7984087441<br/>
+          <i class="bi bi-envelope me-1"></i>ngondaliya@gmail.com
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- How It Works Detail -->
+  <div class="eh-card p-5 text-center">
+    <div class="section-eyebrow">Our Process</div>
+    <h3 class="section-title mb-4">How EstateHub Works</h3>
+    <div class="row g-4">
+      <div class="col-md-3">
+        <div class="how-step">
+          <div class="how-num">01</div>
+          <div class="how-icon">📝</div>
+          <h6 class="fw-semibold">Register</h6>
+          <p class="text-muted small">Create your account with your Gmail address and mobile number (starting 6-9)</p>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="how-step">
+          <div class="how-num">02</div>
+          <div class="how-icon">🔍</div>
+          <h6 class="fw-semibold">Browse</h6>
+          <p class="text-muted small">Search by city, type, and budget across all 5 Gujarat cities</p>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="how-step">
+          <div class="how-num">03</div>
+          <div class="how-icon">🏦</div>
+          <h6 class="fw-semibold">Finance</h6>
+          <p class="text-muted small">Apply via Saurastra (8.75%), HDFC (9.75%), or Karnavati (8.95%) bank</p>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="how-step">
+          <div class="how-num">04</div>
+          <div class="how-icon">✅</div>
+          <h6 class="fw-semibold">Complete</h6>
+          <p class="text-muted small">1.5% brokerage + EMI confirmation sent to your Gmail instantly</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

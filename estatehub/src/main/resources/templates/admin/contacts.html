@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Customer Contacts')}"></head>
+<body class="eh-body">
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+<div class="dashboard-layout">
+  <aside th:replace="~{fragments/admin-sidebar :: adminSidebar('contacts')}"></aside>
+  <main class="dashboard-main">
+    <div class="dash-header">
+      <h1 class="dash-title">Customer Contacts</h1>
+      <!-- Admin menu option 9 — dbms.getContacts(): SELECT GetCustomerContact(custId) as contact -->
+      <div class="dash-sub text-muted">dbms.getContacts() — SELECT GetCustomerContact(?) as contact</div>
+    </div>
+
+    <div class="row g-4">
+      <!-- Lookup Form -->
+      <div class="col-md-5">
+        <div class="eh-card p-4">
+          <h5 class="fw-semibold mb-3">Look Up Owner Contact</h5>
+          <form th:action="@{/admin/contacts}" method="get">
+            <div class="mb-3">
+              <label class="form-label auth-label">Property ID</label>
+              <input type="number" name="propertyId" class="form-control eh-input"
+                     th:value="${propertyId}"
+                     placeholder="Enter Property ID" required/>
+            </div>
+            <button type="submit" class="btn eh-btn-solid w-100">
+              <i class="bi bi-telephone me-2"></i>Get Contact
+            </button>
+          </form>
+
+          <!-- Result -->
+          <div th:if="${contact != null}" class="mt-4 eh-card p-3 text-center">
+            <div class="text-muted small mb-1">Owner Contact for Property #<span th:text="${propertyId}"></span></div>
+            <div class="fw-bold" style="font-size:1.4rem;color:var(--gold)" th:text="${contact}"></div>
+          </div>
+          <div th:if="${contact == null and propertyId != null}" class="mt-4 alert eh-alert-error">
+            No contact found for Property ID: <span th:text="${propertyId}"></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- All Owner Contacts -->
+      <div class="col-md-7">
+        <div class="eh-card p-4">
+          <h5 class="fw-semibold mb-3">All Owner Contacts</h5>
+          <div class="table-responsive">
+            <table class="table eh-table">
+              <thead>
+                <tr><th>Property ID</th><th>Name</th><th>City</th><th>Owner</th><th>Contact</th></tr>
+              </thead>
+              <tbody>
+                <tr th:each="p : ${properties}"
+                    th:if="${p.ownerContact != null}">
+                  <td th:text="${p.rId}"></td>
+                  <td th:text="${#strings.capitalize(p.rName)}"></td>
+                  <td th:text="${#strings.capitalize(p.cityName ?: '-')}"></td>
+                  <td th:text="${p.ownerName ?: '-'}"></td>
+                  <td class="fw-semibold" th:text="${p.ownerContact}"></td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(properties)}">
+                  <td colspan="5" class="text-center text-muted py-4">No properties with owner contacts</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

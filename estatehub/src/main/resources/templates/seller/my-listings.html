@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('My Listings')}"></head>
+<body class="eh-body">
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+<div class="page-hero-sm">
+  <div class="container">
+    <h1 class="page-hero-title">My Listings</h1>
+    <p class="text-muted">Properties you have listed on EstateHub</p>
+  </div>
+</div>
+<div class="container py-5">
+  <div th:if="${success}" class="alert eh-alert-success mb-4" th:text="${success}"></div>
+  <div th:if="${not #lists.isEmpty(properties)}">
+    <div class="row g-4">
+      <div class="col-md-6 col-xl-4" th:each="prop : ${properties}">
+        <div class="eh-property-card">
+          <div class="property-img-wrap">
+            <div class="property-img-placeholder">🏠</div>
+            <div class="property-badge" th:text="${#strings.capitalize(prop.rName)}"></div>
+            <div class="property-city-badge" th:text="${#strings.capitalize(prop.cityName)}"></div>
+          </div>
+          <div class="property-body">
+            <div class="property-price" th:text="'₹' + ${#numbers.formatDecimal(prop.rPrice, 0, 'COMMA', 0, 'POINT')}"></div>
+            <div class="property-name" th:text="${#strings.capitalize(prop.rName)}"></div>
+            <div class="text-muted small" th:text="${prop.rAddress}"></div>
+            <div class="mt-2">
+              <span class="badge" th:classappend="${prop.status == 'available'} ? 'eh-badge-available' : 'eh-badge-sold'"
+                    th:text="${#strings.capitalize(prop.status)}"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div th:if="${#lists.isEmpty(properties)}" class="text-center py-5">
+    <div style="font-size:4rem">🏗️</div>
+    <h4 class="mt-3">No listings yet</h4>
+    <a th:href="@{/seller/list-property}" class="btn eh-btn-solid mt-3">List Your First Property</a>
+  </div>
+</div>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

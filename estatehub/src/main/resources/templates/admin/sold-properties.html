@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Sold / Committed Properties')}"></head>
+<body class="eh-body">
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+<div class="dashboard-layout">
+  <aside th:replace="~{fragments/admin-sidebar :: adminSidebar('sold')}"></aside>
+  <main class="dashboard-main">
+    <div class="dash-header">
+      <!-- Admin.view_properties("sold") → sales_property | Admin.view_properties("commited") → property_log -->
+      <h1 class="dash-title"
+          th:text="${type == 'sold'} ? 'Sold Properties' : 'Committed Properties'"></h1>
+      <div class="dash-sub text-muted"
+           th:text="${type == 'sold'} ? 'Admin.view_properties(&quot;sold&quot;) — SELECT * FROM sales_property'
+                                      : 'Admin.view_properties(&quot;commited&quot;) — SELECT * FROM property_log'">
+      </div>
+    </div>
+
+    <div class="mb-3 d-flex gap-2">
+      <a th:href="@{/admin/sold}"
+         th:classappend="${type == 'sold'} ? ' active'"
+         class="btn eh-btn-solid btn-sm">Sold</a>
+      <a th:href="@{/admin/committed}"
+         th:classappend="${type != 'sold'} ? ' active'"
+         class="btn eh-btn-ghost btn-sm">Committed</a>
+    </div>
+
+    <div class="dash-section">
+      <div class="table-responsive">
+        <table class="table eh-table">
+          <thead>
+            <tr>
+              <!-- Fields from Admin.view_properties(): cityName, rId, rName, rAddress, rPrice, rArea, rFacility, rPath -->
+              <th>City</th>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Address</th>
+              <th>Price</th>
+              <th>Area</th>
+              <th>Facility</th>
+              <th>Path</th>
+              <th>Customer ID</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr th:each="p : ${properties}">
+              <td th:text="${#strings.capitalize(p.cityName ?: '-')}"></td>
+              <td th:text="${p.rId}"></td>
+              <td th:text="${#strings.capitalize(p.rName ?: '-')}"></td>
+              <td th:text="${p.rAddress ?: '-'}"></td>
+              <td th:text="'₹' + ${#numbers.formatDecimal(p.rPrice ?: 0, 0, 'COMMA', 0, 'POINT')}"></td>
+              <td th:text="${p.rArea ?: '-'}"></td>
+              <td th:text="${p.rFacility != null ? #strings.abbreviate(p.rFacility, 30) : '-'}"></td>
+              <td>
+                <span th:if="${p.rPath != null and !p.rPath.isEmpty()}"
+                      th:text="${#strings.abbreviate(p.rPath, 20)}" class="text-muted small"></span>
+                <span th:unless="${p.rPath != null and !p.rPath.isEmpty()}" class="text-muted">-</span>
+              </td>
+              <td th:text="${p.customerId ?: '-'}"></td>
+              <td th:text="${p.soldAt != null ? #temporals.format(p.soldAt, 'dd-MM-yyyy') : '-'}"></td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(properties)}">
+              <td colspan="10" class="text-center text-muted py-5">
+                <div style="font-size:2rem" th:text="${type == 'sold'} ? '🏷️' : '🤝'"></div>
+                <div class="mt-2"
+                     th:text="${type == 'sold'} ? 'No sold properties yet' : 'No committed properties yet'"></div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</div>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Browse Properties')}"></head>
+<body class="eh-body">
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+<div class="page-hero-sm">
+  <div class="container">
+    <h1 class="page-hero-title">Browse Properties</h1>
+    <p class="text-muted">Find your perfect property across Gujarat</p>
+  </div>
+</div>
+<div class="container py-5">
+  <div class="row g-4">
+    <!-- Cheapest by City -->
+    <div class="col-md-6">
+      <div class="eh-card p-4 h-100">
+        <h5 class="fw-semibold mb-1"><i class="bi bi-trophy me-2 text-warning"></i>Cheapest Properties by City</h5>
+        <p class="text-muted small mb-3">View most affordable listing in each city</p>
+        <form th:action="@{/buyer/cheapest}" method="get">
+          <select name="city" class="form-select eh-select mb-3">
+            <option th:each="c : ${cities}" th:value="${c}" th:text="${#strings.capitalize(c)}"></option>
+          </select>
+          <button type="submit" class="btn eh-btn-solid w-100">Find Cheapest</button>
+        </form>
+      </div>
+    </div>
+    <!-- Search by Budget -->
+    <div class="col-md-6">
+      <div class="eh-card p-4 h-100">
+        <h5 class="fw-semibold mb-1"><i class="bi bi-currency-rupee me-2 text-success"></i>Search by Budget</h5>
+        <p class="text-muted small mb-3">Find properties within your price range</p>
+        <form th:action="@{/buyer/search-budget}" method="get">
+          <select name="city" class="form-select eh-select mb-3">
+            <option th:each="c : ${cities}" th:value="${c}" th:text="${#strings.capitalize(c)}"></option>
+          </select>
+          <input type="number" name="maxPrice" class="form-control eh-input mb-3"
+                 placeholder="Maximum budget (₹)" required/>
+          <button type="submit" class="btn eh-btn-solid w-100">Search</button>
+        </form>
+      </div>
+    </div>
+    <!-- By type -->
+    <div class="col-12">
+      <div class="eh-card p-4">
+        <h5 class="fw-semibold mb-3"><i class="bi bi-filter me-2"></i>Browse by Property Type</h5>
+        <div class="row g-3">
+          <div class="col-md-4">
+            <h6 class="text-muted small fw-semibold mb-2">RESIDENTIAL</h6>
+            <div class="d-flex flex-wrap gap-2">
+              <a th:each="t : ${residentialTypes}"
+                 th:href="@{/properties/list(type=${t})}"
+                 class="city-chip" th:text="${#strings.capitalize(t)}"></a>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <h6 class="text-muted small fw-semibold mb-2">COMMERCIAL</h6>
+            <div class="d-flex flex-wrap gap-2">
+              <a th:each="t : ${commercialTypes}"
+                 th:href="@{/properties/list(type=${t})}"
+                 class="city-chip" th:text="${t}"></a>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <h6 class="text-muted small fw-semibold mb-2">INDUSTRIAL</h6>
+            <div class="d-flex flex-wrap gap-2">
+              <a th:each="t : ${industrialTypes}"
+                 th:href="@{/properties/list(type=${t})}"
+                 class="city-chip" th:text="${#strings.capitalize(t)}"></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

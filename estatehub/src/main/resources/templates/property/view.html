@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('Property Details')}"></head>
+<body class="eh-body">
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+<div class="container py-5 mt-5">
+  <nav aria-label="breadcrumb" class="mb-4">
+    <ol class="breadcrumb eh-breadcrumb">
+      <li class="breadcrumb-item"><a th:href="@{/}">Home</a></li>
+      <li class="breadcrumb-item"><a th:href="@{/properties/list}">Properties</a></li>
+      <li class="breadcrumb-item active" th:text="${#strings.capitalize(property.rName)}"></li>
+    </ol>
+  </nav>
+
+  <div th:if="${error}" class="alert eh-alert-error mb-4" th:text="${error}"></div>
+  <div th:if="${success}" class="alert eh-alert-success mb-4" th:text="${success}"></div>
+
+  <div class="row g-5">
+    <!-- Image / Visual -->
+    <div class="col-lg-5">
+      <div class="property-detail-img">
+        <span th:switch="${property.rName?.toLowerCase()}">
+          <span th:case="'flat'">🏢</span>
+          <span th:case="'bungalow'">🏡</span>
+          <span th:case="'villa'">🏰</span>
+          <span th:case="'tenement'">🏘️</span>
+          <span th:case="'office'">🏢</span>
+          <span th:case="'warehouse'">🏭</span>
+          <span th:case="*">🏠</span>
+        </span>
+      </div>
+      <!-- Owner Info -->
+      <div class="eh-card p-3 mt-3" th:if="${property.ownerName}">
+        <h6 class="fw-semibold mb-2">Owner Details</h6>
+        <p class="mb-1 small"><i class="bi bi-person me-2 text-muted"></i><span th:text="${property.ownerName}"></span></p>
+        <p class="mb-1 small" th:if="${property.ownerContact}">
+          <i class="bi bi-phone me-2 text-muted"></i><span th:text="${property.ownerContact}"></span>
+        </p>
+        <p class="mb-0 small" th:if="${property.ownerAddress}">
+          <i class="bi bi-geo-alt me-2 text-muted"></i><span th:text="${property.ownerAddress}"></span>
+        </p>
+      </div>
+    </div>
+
+    <!-- Details -->
+    <div class="col-lg-7">
+      <div class="d-flex gap-2 mb-3">
+        <span class="badge eh-badge-type" th:text="${#strings.capitalize(property.rName)}"></span>
+        <span class="badge eh-badge-city" th:text="${#strings.capitalize(property.cityName)}"></span>
+        <span class="badge" th:classappend="${property.status == 'available'} ? 'eh-badge-available' : 'eh-badge-sold'"
+              th:text="${#strings.capitalize(property.status)}"></span>
+      </div>
+
+      <h2 class="property-detail-title"
+          th:text="${#strings.capitalize(property.rName) + ' in ' + #strings.capitalize(property.cityName)}"></h2>
+      <div class="property-detail-price"
+           th:text="'₹ ' + ${#numbers.formatDecimal(property.rPrice, 0, 'COMMA', 0, 'POINT')}"></div>
+
+      <div class="property-detail-meta mt-3 row g-3">
+        <div class="col-6">
+          <div class="detail-meta-item">
+            <div class="dmi-label">Property ID</div>
+            <div class="dmi-value" th:text="'#' + ${property.rId}"></div>
+          </div>
+        </div>
+        <div class="col-6">
+          <div class="detail-meta-item">
+            <div class="dmi-label">Area</div>
+            <div class="dmi-value" th:text="${property.rArea}"></div>
+          </div>
+        </div>
+        <div class="col-12">
+          <div class="detail-meta-item">
+            <div class="dmi-label">Address</div>
+            <div class="dmi-value" th:text="${property.rAddress}"></div>
+          </div>
+        </div>
+        <div class="col-12" th:if="${property.rFacility}">
+          <div class="detail-meta-item">
+            <div class="dmi-label">Facilities</div>
+            <div class="dmi-value" th:text="${property.rFacility}"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Brokerage Info -->
+      <div class="eh-card p-3 mt-4 brokerage-info">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <div class="text-muted small">Property Price</div>
+            <div class="fw-semibold" th:text="'₹' + ${#numbers.formatDecimal(property.rPrice, 0, 'COMMA', 0, 'POINT')}"></div>
+          </div>
+          <div class="text-center">
+            <div class="text-muted small">+ 1.5% Brokerage</div>
+            <div class="text-warning fw-semibold"
+                 th:text="'₹' + ${#numbers.formatDecimal(property.rPrice * 0.015, 0, 'COMMA', 0, 'POINT')}"></div>
+          </div>
+          <div class="text-end">
+            <div class="text-muted small">Total Payable</div>
+            <div class="eh-price-total fw-bold"
+                 th:text="'₹' + ${#numbers.formatDecimal(property.rPrice * 1.015, 0, 'COMMA', 0, 'POINT')}"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div sec:authorize="isAuthenticated()">
+        <div th:if="${property.status == 'available'}" class="d-flex gap-3 mt-4 flex-wrap">
+          <!-- Buy Now -->
+          <form th:action="@{/buyer/purchase/{id}(id=${property.rId})}" method="post" class="flex-grow-1">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+            <input type="hidden" name="propertyType" th:value="${property.rName}"/>
+            <input type="hidden" name="cityName" th:value="${property.cityName}"/>
+            <button type="submit" class="btn eh-btn-solid w-100">
+              <i class="bi bi-bag-check me-2"></i>Buy Now
+            </button>
+          </form>
+          <!-- Apply for Loan -->
+          <a th:href="@{/loan/choose/{id}(id=${property.rId})}"
+             class="btn eh-btn-outline-dark flex-grow-1">
+            <i class="bi bi-bank me-2"></i>Apply for Loan
+          </a>
+        </div>
+        <div th:if="${property.status != 'available'}" class="mt-4">
+          <div class="alert eh-alert-error">This property is no longer available.</div>
+        </div>
+      </div>
+
+      <div sec:authorize="isAnonymous()" class="mt-4">
+        <a th:href="@{/auth/login}" class="btn eh-btn-solid w-100">
+          <i class="bi bi-lock me-2"></i>Login to Purchase
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

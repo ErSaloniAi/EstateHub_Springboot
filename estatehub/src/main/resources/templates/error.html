@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Error')}"></head>
+<body class="eh-body auth-body">
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+<div class="auth-wrapper">
+  <div class="auth-card text-center" style="max-width:500px">
+    <div style="font-size:4rem">🏗️</div>
+    <h2 class="auth-title mt-3">
+      <span th:text="${status ?: '404'}">404</span>
+    </h2>
+    <p class="auth-sub text-muted"
+       th:text="${error ?: 'Page not found'}">Page not found</p>
+    <p class="text-muted small" th:if="${message}" th:text="${message}"></p>
+    <div class="d-flex gap-3 justify-content-center mt-4">
+      <a th:href="@{/}" class="btn eh-btn-solid px-4">Go Home</a>
+      <a th:href="@{/properties/list}" class="btn eh-btn-ghost px-4">Browse Properties</a>
+    </div>
+  </div>
+</div>
+</body>
+</html>

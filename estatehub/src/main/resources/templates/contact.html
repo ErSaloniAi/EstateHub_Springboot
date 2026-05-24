@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Contact Us')}"></head>
+<body class="eh-body">
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+<div class="page-hero-sm">
+  <div class="container">
+    <h1 class="page-hero-title">Contact Us</h1>
+    <p class="text-muted">Get in touch with the EstateHub team</p>
+  </div>
+</div>
+
+<div class="container py-5">
+  <div class="row g-5">
+    <div class="col-lg-5">
+      <div class="section-eyebrow">Get In Touch</div>
+      <h2 class="section-title mb-4">We're Here to Help</h2>
+      <div class="contact-info-list">
+        <div class="contact-info-item">
+          <div class="ci-icon"><i class="bi bi-envelope-fill"></i></div>
+          <div>
+            <div class="ci-label">Email</div>
+            <div class="ci-value">estatehub807@gmail.com</div>
+          </div>
+        </div>
+        <div class="contact-info-item">
+          <div class="ci-icon"><i class="bi bi-geo-alt-fill"></i></div>
+          <div>
+            <div class="ci-label">Coverage</div>
+            <div class="ci-value">Ahmedabad · Rajkot · Surat · Vadodara · Bhavnagar</div>
+          </div>
+        </div>
+        <div class="contact-info-item">
+          <div class="ci-icon"><i class="bi bi-bank"></i></div>
+          <div>
+            <div class="ci-label">Partner Banks</div>
+            <div class="ci-value">Saurastra · HDFC · Karnavati</div>
+          </div>
+        </div>
+        <div class="contact-info-item">
+          <div class="ci-icon"><i class="bi bi-percent"></i></div>
+          <div>
+            <div class="ci-label">Brokerage</div>
+            <div class="ci-value">1.5% on all transactions</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-7">
+      <div class="eh-card p-4 p-md-5">
+        <h5 class="fw-semibold mb-4">Send a Message</h5>
+        <div class="alert eh-alert-info mb-4">
+          For account issues, email us directly at <strong>estatehub807@gmail.com</strong>
+        </div>
+        <form>
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label auth-label">Your Name</label>
+              <input type="text" class="form-control eh-input" placeholder="Saloni Gorsiya"/>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label auth-label">Gmail Address</label>
+              <input type="email" class="form-control eh-input" placeholder="yourname@gmail.com"/>
+            </div>
+            <div class="col-12">
+              <label class="form-label auth-label">Subject</label>
+              <input type="text" class="form-control eh-input" placeholder="Property inquiry, loan help, etc."/>
+            </div>
+            <div class="col-12">
+              <label class="form-label auth-label">Message</label>
+              <textarea class="form-control eh-input" rows="5"
+                        placeholder="Describe your query in detail..."></textarea>
+            </div>
+            <div class="col-12">
+              <button type="button" class="btn eh-btn-solid px-5"
+                      onclick="this.textContent='Message sent! We\'ll reply soon.'; this.disabled=true;">
+                <i class="bi bi-send me-2"></i>Send Message
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

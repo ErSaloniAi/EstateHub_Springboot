@@ -1,0 +1,56 @@
+version: '3.8'
+
+# ============================================================
+# EstateHub — Docker Compose (App + MySQL)
+# DB port 3307 matches CreateConnection.java and Admin.java
+# ============================================================
+services:
+
+  db:
+    image: mysql:8.0
+    container_name: estatehub-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: real_estate
+      MYSQL_ROOT_PASSWORD: ""
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+    ports:
+      - "3307:3306"             # 3307 host → 3306 container (matches dbUrl)
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./src/main/resources/schema.sql:/docker-entrypoint-initdb.d/schema.sql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+
+  app:
+    build: .
+    container_name: estatehub-app
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/real_estate?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: ""
+      SPRING_MAIL_USERNAME: estatehub807@gmail.com
+      SPRING_MAIL_PASSWORD: "bpbx wjuf vchc ylyv"
+      APP_JWT_SECRET: EstateHubSecretKey2024VeryLongSecretKeyForJWTTokenGeneration
+    volumes:
+      - uploads_data:/app/uploads
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8080/"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 90s
+
+volumes:
+  mysql_data:
+  uploads_data:

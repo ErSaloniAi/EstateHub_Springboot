@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('My Profile')}"></head>
+<body class="eh-body">
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+<div class="dashboard-layout">
+  <aside class="eh-sidebar">
+    <div class="sidebar-user">
+      <div class="sidebar-avatar"><i class="bi bi-person-circle"></i></div>
+      <div class="sidebar-name" th:text="${customer?.cName ?: 'User'}">User</div>
+    </div>
+    <nav class="sidebar-nav">
+      <a th:href="@{/dashboard}" class="sidebar-link"><i class="bi bi-grid"></i> Dashboard</a>
+      <a th:href="@{/dashboard/profile}" class="sidebar-link active"><i class="bi bi-person"></i> My Profile</a>
+      <a th:href="@{/buyer/browse}" class="sidebar-link"><i class="bi bi-search"></i> Browse</a>
+      <a th:href="@{/seller/list-property}" class="sidebar-link"><i class="bi bi-plus-circle"></i> List Property</a>
+      <hr class="sidebar-divider"/>
+      <form th:action="@{/auth/logout}" method="post">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+        <button type="submit" class="sidebar-link sidebar-logout"><i class="bi bi-box-arrow-right"></i> Logout</button>
+      </form>
+    </nav>
+  </aside>
+  <main class="dashboard-main">
+    <div class="dash-header">
+      <h1 class="dash-title">My Profile</h1>
+      <div class="dash-sub text-muted">Update your personal details</div>
+    </div>
+    <div th:if="${success}" class="alert eh-alert-success" th:text="${success}"></div>
+    <div th:if="${error}" class="alert eh-alert-error" th:text="${error}"></div>
+
+    <div class="eh-card p-4">
+      <form th:action="@{/dashboard/profile}" method="post">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label auth-label">Full Name</label>
+            <input type="text" class="form-control eh-input" th:value="${customer?.cName}" readonly/>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label auth-label">Email</label>
+            <input type="email" class="form-control eh-input" th:value="${customer?.cEmail}" readonly/>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label auth-label">Mobile</label>
+            <input type="text" class="form-control eh-input" th:value="${customer?.cPhone}" readonly/>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label auth-label">Address</label>
+            <input type="text" name="address" class="form-control eh-input"
+                   th:value="${customer?.cAddress}" placeholder="Your address"/>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label auth-label">City</label>
+            <input type="text" name="city" class="form-control eh-input"
+                   th:value="${customer?.cCity}" placeholder="City"/>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label auth-label">State</label>
+            <input type="text" name="state" class="form-control eh-input"
+                   th:value="${customer?.cState != null ? customer.cState : 'Gujarat'}" placeholder="Gujarat"/>
+            <div class="form-hint">Defaults to Gujarat</div>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label auth-label">Age</label>
+            <input type="number" name="age" class="form-control eh-input"
+                   th:value="${customer?.cAge != null ? customer.cAge : 25}" min="1" placeholder="25"/>
+            <div class="form-hint">Defaults to 25 if blank</div>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label auth-label">Occupation</label>
+            <input type="text" name="occupation" class="form-control eh-input"
+                   th:value="${customer?.cOccupation}" placeholder="Your occupation"/>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label auth-label">Annual Income (₹)</label>
+            <input type="number" name="income" step="0.01" class="form-control eh-input"
+                   th:value="${customer?.cIncome}" placeholder="0.0"/>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label auth-label">Role</label>
+            <select name="type" class="form-select eh-select">
+              <option value="buyer" th:selected="${customer?.type == 'buyer'}">Buyer</option>
+              <option value="seller" th:selected="${customer?.type == 'seller'}">Seller</option>
+            </select>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label auth-label">Property City Interest</label>
+            <select name="cityName" class="form-select eh-select">
+              <option value="">Select City</option>
+              <option value="ahmedabad" th:selected="${customer?.cityName == 'ahmedabad'}">Ahmedabad</option>
+              <option value="rajkot" th:selected="${customer?.cityName == 'rajkot'}">Rajkot</option>
+              <option value="surat" th:selected="${customer?.cityName == 'surat'}">Surat</option>
+              <option value="vadodara" th:selected="${customer?.cityName == 'vadodara'}">Vadodara</option>
+              <option value="bhavnagar" th:selected="${customer?.cityName == 'bhavnagar'}">Bhavnagar</option>
+            </select>
+          </div>
+        </div>
+        <button type="submit" class="btn eh-btn-solid mt-4 px-5">Save Profile</button>
+      </form>
+    </div>
+  </main>
+</div>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

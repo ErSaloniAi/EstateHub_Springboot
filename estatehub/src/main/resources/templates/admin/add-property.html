@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Add Property')}"></head>
+<body class="eh-body">
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+<div class="dashboard-layout">
+  <aside th:replace="~{fragments/admin-sidebar :: adminSidebar('add-property')}"></aside>
+  <main class="dashboard-main">
+    <div class="dash-header">
+      <h1 class="dash-title">Add Property</h1>
+      <div class="dash-sub text-muted">Admin.addProperty() — INSERT INTO properties</div>
+    </div>
+    <div th:if="${success}" class="alert eh-alert-success mb-4" th:text="${success}"></div>
+    <div th:if="${error}" class="alert eh-alert-error mb-4" th:text="${error}"></div>
+
+    <div class="eh-card p-4 p-md-5">
+      <form th:action="@{/admin/properties/add}" method="post"
+            th:object="${addPropertyRequest}" enctype="multipart/form-data">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+        <div class="row g-4">
+
+          <div class="col-md-6">
+            <label class="form-label auth-label">Property Name *</label>
+            <input type="text" th:field="*{name}" class="form-control eh-input"
+                   placeholder="e.g. flat, bungalow, villa" required/>
+            <div class="text-danger small mt-1" th:if="${#fields.hasErrors('name')}"
+                 th:errors="*{name}"></div>
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label auth-label">City</label>
+            <select th:field="*{cityName}" class="form-select eh-select">
+              <option value="">Select City</option>
+              <option th:each="c : ${cities}" th:value="${c}"
+                      th:text="${#strings.capitalize(c)}"></option>
+            </select>
+          </div>
+
+          <div class="col-md-4">
+            <!-- area1 + " sq ft." — preserved from Admin.addProperty() -->
+            <label class="form-label auth-label">Area (sq ft) *
+              <span class="form-hint d-inline">&nbsp;Will be saved as "X sq ft."</span>
+            </label>
+            <input type="number" th:field="*{area}" class="form-control eh-input"
+                   placeholder="e.g. 1200" step="0.01" required/>
+            <div class="text-danger small mt-1" th:if="${#fields.hasErrors('area')}"
+                 th:errors="*{area}"></div>
+          </div>
+
+          <div class="col-md-4">
+            <label class="form-label auth-label">Price (₹) *</label>
+            <input type="number" th:field="*{price}" class="form-control eh-input"
+                   placeholder="e.g. 4500000" step="0.01" required/>
+            <div class="text-danger small mt-1" th:if="${#fields.hasErrors('price')}"
+                 th:errors="*{price}"></div>
+          </div>
+
+          <div class="col-md-4">
+            <label class="form-label auth-label">Category</label>
+            <select th:field="*{propertyCategory}" class="form-select eh-select">
+              <option value="Residential">Residential</option>
+              <option value="Commercial">Commercial</option>
+              <option value="Industrial">Industrial</option>
+            </select>
+          </div>
+
+          <div class="col-12">
+            <label class="form-label auth-label">Address *</label>
+            <input type="text" th:field="*{address}" class="form-control eh-input"
+                   placeholder="Full property address" required/>
+            <div class="text-danger small mt-1" th:if="${#fields.hasErrors('address')}"
+                 th:errors="*{address}"></div>
+          </div>
+
+          <div class="col-12">
+            <label class="form-label auth-label">Facilities *</label>
+            <input type="text" th:field="*{facility}" class="form-control eh-input"
+                   placeholder="e.g. Parking, Lift, Security, Swimming Pool" required/>
+            <div class="text-danger small mt-1" th:if="${#fields.hasErrors('facility')}"
+                 th:errors="*{facility}"></div>
+          </div>
+
+          <div class="col-12">
+            <label class="form-label auth-label">Property Image</label>
+            <input type="file" th:field="*{imageFile}" class="form-control eh-input"
+                   accept="image/*"/>
+            <div class="form-hint">JPG, PNG, JPEG — rPath & rExtention auto-generated</div>
+          </div>
+
+        </div>
+        <div class="mt-4 d-flex gap-3">
+          <button type="submit" class="btn eh-btn-solid px-5">
+            <i class="bi bi-plus-circle me-2"></i>Add Property
+          </button>
+          <a th:href="@{/admin/properties}" class="btn eh-btn-ghost px-4">Cancel</a>
+        </div>
+      </form>
+    </div>
+  </main>
+</div>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Purchase Successful')}"></head>
+<body class="eh-body">
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+<div class="container py-5 mt-5 text-center" style="max-width:600px">
+  <div class="success-animation">✅</div>
+  <h2 class="mt-4 fw-bold">Purchase Successful!</h2>
+  <div th:if="${success}" class="alert eh-alert-success mt-3" th:text="${success}"></div>
+  <p class="text-muted mt-3">Your property purchase confirmation has been sent to your email. Check your inbox for full details including loan information.</p>
+  <div class="d-flex gap-3 justify-content-center mt-4">
+    <a th:href="@{/dashboard}" class="btn eh-btn-solid">Go to Dashboard</a>
+    <a th:href="@{/properties/list}" class="btn eh-btn-outline-dark">Browse More</a>
+  </div>
+</div>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

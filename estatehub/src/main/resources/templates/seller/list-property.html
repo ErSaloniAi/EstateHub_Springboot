@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('List Your Property')}"></head>
+<body class="eh-body">
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+<div class="page-hero-sm">
+  <div class="container">
+    <h1 class="page-hero-title">List Your Property</h1>
+    <p class="text-muted">1.5% brokerage applies on successful listing</p>
+  </div>
+</div>
+<div class="container py-5" style="max-width:800px">
+  <div th:if="${error}" class="alert eh-alert-error mb-4" th:text="${error}"></div>
+  <div th:if="${success}" class="alert eh-alert-success mb-4" th:text="${success}"></div>
+  <div th:if="${expectedBrokerage}" class="alert eh-alert-info mb-4">
+    Required brokerage: <strong>₹<span th:text="${expectedBrokerage}"></span></strong>
+  </div>
+
+  <div class="eh-card p-4 p-md-5">
+    <form th:action="@{/seller/list-property}" method="post" enctype="multipart/form-data">
+      <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+      <div class="row g-4">
+        <div class="col-md-6">
+          <label class="form-label auth-label">City *</label>
+          <select name="cityName" class="form-select eh-select" required>
+            <option value="">Select City</option>
+            <option th:each="c : ${cities}" th:value="${c}" th:text="${#strings.capitalize(c)}"></option>
+          </select>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label auth-label">Property Category *</label>
+          <select name="propertyCategory" class="form-select eh-select" id="catSelect" required onchange="updateTypes()">
+            <option value="Residential">Residential</option>
+            <option value="Commercial">Commercial</option>
+            <option value="Industrial">Industrial</option>
+          </select>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label auth-label">Property Type *</label>
+          <select name="propertyType" class="form-select eh-select" id="typeSelect" required>
+            <option th:each="t : ${residentialTypes}" th:value="${t}" th:text="${#strings.capitalize(t)}"></option>
+          </select>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label auth-label">Area (sq ft) *</label>
+          <input type="text" name="area" class="form-control eh-input" placeholder="e.g. 1200" required/>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label auth-label">Price (₹) *</label>
+          <input type="number" name="price" id="priceInput" class="form-control eh-input"
+                 placeholder="e.g. 5000000" required oninput="calcBrokerage()"/>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label auth-label">
+            Brokerage (1.5% of price) *
+            <span class="text-warning small" id="brokerageHint"></span>
+          </label>
+          <input type="number" name="brokerage" id="brokerageInput" class="form-control eh-input"
+                 placeholder="Auto-calculated" step="0.01" required/>
+        </div>
+        <div class="col-12">
+          <label class="form-label auth-label">Property Address *</label>
+          <input type="text" name="propertyAddress" class="form-control eh-input"
+                 placeholder="Full property address" required/>
+        </div>
+        <div class="col-12">
+          <label class="form-label auth-label">Facilities (comma separated) *</label>
+          <input type="text" name="facilities" class="form-control eh-input"
+                 placeholder="e.g. Parking, Gym, Swimming Pool, Security" required/>
+        </div>
+        <div class="col-12">
+          <label class="form-label auth-label">Your Present Address *</label>
+          <input type="text" name="sellerAddress" class="form-control eh-input"
+                 placeholder="Your current address" required/>
+        </div>
+        <div class="col-12">
+          <label class="form-label auth-label">Property Image</label>
+          <input type="file" name="imageFile" class="form-control eh-input"
+                 accept="image/*"/>
+          <div class="form-hint">JPG, PNG, JPEG supported</div>
+        </div>
+      </div>
+      <button type="submit" class="btn eh-btn-solid mt-4 px-5">
+        <i class="bi bi-plus-circle me-2"></i>List Property
+      </button>
+    </form>
+  </div>
+</div>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<script th:inline="javascript">
+  const residential = /*[[${residentialTypes}]]*/ [];
+  const commercial = /*[[${commercialTypes}]]*/ [];
+  const industrial = /*[[${industrialTypes}]]*/ [];
+
+  function updateTypes() {
+    const cat = document.getElementById('catSelect').value;
+    const sel = document.getElementById('typeSelect');
+    let types = cat === 'Commercial' ? commercial : cat === 'Industrial' ? industrial : residential;
+    sel.innerHTML = types.map(t => `<option value="${t}">${t.charAt(0).toUpperCase()+t.slice(1)}</option>`).join('');
+  }
+
+  function calcBrokerage() {
+    const price = parseFloat(document.getElementById('priceInput').value) || 0;
+    const brok = (price * 0.015).toFixed(2);
+    document.getElementById('brokerageInput').value = brok;
+    document.getElementById('brokerageHint').textContent = brok > 0 ? '= ₹' + brok : '';
+  }
+</script>
+</body>
+</html>

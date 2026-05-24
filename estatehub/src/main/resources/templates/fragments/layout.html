@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:fragment="head(title)">
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title th:text="${title} + ' | EstateHub'">EstateHub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css"/>
+  <link rel="stylesheet" th:href="@{/css/main.css}"/>
+</head>
+
+<body>
+
+<!-- ═══════════════════════════ NAVBAR ═══════════════════════════ -->
+<nav th:fragment="navbar" class="eh-navbar navbar navbar-expand-lg fixed-top">
+  <div class="container">
+    <a class="navbar-brand eh-brand" th:href="@{/}">
+      <span class="brand-icon">⬡</span>
+      <span class="brand-text">ESTATE<strong>HUB</strong></span>
+    </a>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navMenu">
+      <ul class="navbar-nav ms-auto align-items-center gap-1">
+        <li class="nav-item"><a class="nav-link" th:href="@{/}">Home</a></li>
+        <li class="nav-item"><a class="nav-link" th:href="@{/properties/list}">Properties</a></li>
+        <li class="nav-item"><a class="nav-link" th:href="@{/about}">About</a></li>
+        <li class="nav-item"><a class="nav-link" th:href="@{/contact}">Contact</a></li>
+
+        <!-- Not logged in -->
+        <li class="nav-item" sec:authorize="isAnonymous()">
+          <a class="nav-link eh-btn-outline" th:href="@{/auth/login}">Login</a>
+        </li>
+        <li class="nav-item" sec:authorize="isAnonymous()">
+          <a class="nav-link eh-btn-solid" th:href="@{/auth/register}">Register</a>
+        </li>
+
+        <!-- Logged in as user -->
+        <li class="nav-item dropdown" sec:authorize="isAuthenticated()">
+          <a class="nav-link dropdown-toggle eh-user-pill" href="#" data-bs-toggle="dropdown">
+            <i class="bi bi-person-circle me-1"></i>
+            <span sec:authentication="name">User</span>
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end eh-dropdown">
+            <li><a class="dropdown-item" th:href="@{/dashboard}"><i class="bi bi-grid me-2"></i>Dashboard</a></li>
+            <li><a class="dropdown-item" th:href="@{/dashboard/profile}"><i class="bi bi-person me-2"></i>My Profile</a></li>
+            <li><a class="dropdown-item" th:href="@{/buyer/browse}"><i class="bi bi-search me-2"></i>Browse Properties</a></li>
+            <li><a class="dropdown-item" th:href="@{/seller/list-property}"><i class="bi bi-plus-circle me-2"></i>List Property</a></li>
+            <li sec:authorize="hasRole('ADMIN')"><hr class="dropdown-divider"/></li>
+            <li sec:authorize="hasRole('ADMIN')">
+              <a class="dropdown-item text-warning" th:href="@{/admin}"><i class="bi bi-shield me-2"></i>Admin Panel</a>
+            </li>
+            <li><hr class="dropdown-divider"/></li>
+            <li>
+              <form th:action="@{/auth/logout}" method="post">
+                <button type="submit" class="dropdown-item text-danger">
+                  <i class="bi bi-box-arrow-right me-2"></i>Logout
+                </button>
+              </form>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- ═══════════════════════════ FOOTER ═══════════════════════════ -->
+<footer th:fragment="footer" class="eh-footer mt-auto">
+  <div class="container">
+    <div class="row g-4 py-5">
+      <div class="col-lg-4">
+        <div class="eh-brand mb-3">
+          <span class="brand-icon">⬡</span>
+          <span class="brand-text">ESTATE<strong>HUB</strong></span>
+        </div>
+        <p class="text-muted small">Gujarat's premier real estate platform. Ahmedabad · Rajkot · Surat · Vadodara · Bhavnagar</p>
+      </div>
+      <div class="col-lg-2 col-6">
+        <h6 class="footer-heading">Explore</h6>
+        <ul class="list-unstyled footer-links">
+          <li><a th:href="@{/properties/list}">All Properties</a></li>
+          <li><a th:href="@{/buyer/browse}">Buy</a></li>
+          <li><a th:href="@{/seller/list-property}">Sell</a></li>
+        </ul>
+      </div>
+      <div class="col-lg-2 col-6">
+        <h6 class="footer-heading">Cities</h6>
+        <ul class="list-unstyled footer-links">
+          <li><a th:href="@{/properties/list(city=ahmedabad)}">Ahmedabad</a></li>
+          <li><a th:href="@{/properties/list(city=rajkot)}">Rajkot</a></li>
+          <li><a th:href="@{/properties/list(city=surat)}">Surat</a></li>
+          <li><a th:href="@{/properties/list(city=vadodara)}">Vadodara</a></li>
+          <li><a th:href="@{/properties/list(city=bhavnagar)}">Bhavnagar</a></li>
+        </ul>
+      </div>
+      <div class="col-lg-4">
+        <h6 class="footer-heading">Contact</h6>
+        <p class="text-muted small mb-1"><i class="bi bi-envelope me-2"></i>estatehub807@gmail.com</p>
+        <p class="text-muted small mb-1"><i class="bi bi-geo-alt me-2"></i>Gujarat, India</p>
+        <div class="mt-3 d-flex gap-2">
+          <a href="#" class="eh-social-btn"><i class="bi bi-instagram"></i></a>
+          <a href="#" class="eh-social-btn"><i class="bi bi-linkedin"></i></a>
+          <a href="#" class="eh-social-btn"><i class="bi bi-twitter-x"></i></a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom py-3 border-top border-secondary">
+      <div class="row align-items-center">
+        <div class="col text-muted small">© 2024 EstateHub. All rights reserved.</div>
+        <div class="col text-end text-muted small">Built with Spring Boot 3 · MySQL · JWT</div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/js/main.js}"></script>
+</body>
+</html>

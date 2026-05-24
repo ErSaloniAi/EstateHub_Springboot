@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<!-- Admin Sidebar Fragment -->
+<aside th:fragment="adminSidebar(active)" class="eh-sidebar">
+  <div class="sidebar-user">
+    <div class="sidebar-avatar" style="background:var(--gold)"><i class="bi bi-shield-fill text-dark"></i></div>
+    <div class="sidebar-name">Admin Panel</div>
+  </div>
+  <nav class="sidebar-nav">
+    <a th:href="@{/admin}" th:classappend="${active=='dashboard'} ? ' active'" class="sidebar-link"><i class="bi bi-speedometer2"></i> Dashboard</a>
+    <a th:href="@{/admin/admins}" th:classappend="${active=='admins'} ? ' active'" class="sidebar-link"><i class="bi bi-people"></i> Manage Admins</a>
+    <a th:href="@{/admin/properties}" th:classappend="${active=='properties'} ? ' active'" class="sidebar-link"><i class="bi bi-building"></i> Properties</a>
+    <a th:href="@{/admin/properties/add}" th:classappend="${active=='add-property'} ? ' active'" class="sidebar-link"><i class="bi bi-plus-circle"></i> Add Property</a>
+    <a th:href="@{/admin/sold}" th:classappend="${active=='sold'} ? ' active'" class="sidebar-link"><i class="bi bi-bag-check"></i> Sold Properties</a>
+    <a th:href="@{/admin/committed}" th:classappend="${active=='committed'} ? ' active'" class="sidebar-link"><i class="bi bi-clock-history"></i> Committed</a>
+    <a th:href="@{/admin/loans}" th:classappend="${active=='loans'} ? ' active'" class="sidebar-link"><i class="bi bi-bank"></i> Loan Details</a>
+    <a th:href="@{/admin/count-by-city}" th:classappend="${active=='count'} ? ' active'" class="sidebar-link"><i class="bi bi-bar-chart"></i> Count by City</a>
+    <a th:href="@{/admin/contacts}" th:classappend="${active=='contacts'} ? ' active'" class="sidebar-link"><i class="bi bi-telephone"></i> Contacts</a>
+    <a th:href="@{/admin/customers}" th:classappend="${active=='customers'} ? ' active'" class="sidebar-link"><i class="bi bi-person-lines-fill"></i> Customers</a>
+    <hr class="sidebar-divider"/>
+    <form th:action="@{/auth/logout}" method="post">
+      <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+      <button type="submit" class="sidebar-link sidebar-logout"><i class="bi bi-box-arrow-right"></i> Logout</button>
+    </form>
+  </nav>
+</aside>
+</html>

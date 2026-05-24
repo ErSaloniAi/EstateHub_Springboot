@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Loan Details')}"></head>
+<body class="eh-body">
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+<div class="dashboard-layout">
+  <aside th:replace="~{fragments/admin-sidebar :: adminSidebar('loans')}"></aside>
+  <main class="dashboard-main">
+    <div class="dash-header">
+      <h1 class="dash-title">Loan Details</h1>
+      <div class="dash-sub text-muted">Admin.viewLoanDetail() — SELECT * FROM loan</div>
+    </div>
+
+    <!-- Summary Cards -->
+    <div class="row g-3 mb-4">
+      <div class="col-md-4">
+        <div class="admin-stat-card">
+          <div class="asc-icon">🏦</div>
+          <div class="asc-value" th:text="${#lists.size(loans)}">0</div>
+          <div class="asc-label">Total Loans</div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="admin-stat-card">
+          <div class="asc-icon">⏳</div>
+          <div class="asc-value"
+               th:text="${#lists.size(loans.?[loanStatus == 'Pending'])}">0</div>
+          <div class="asc-label">Pending</div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="admin-stat-card">
+          <div class="asc-icon">✅</div>
+          <div class="asc-value"
+               th:text="${#lists.size(loans.?[loanStatus == 'Approved'])}">0</div>
+          <div class="asc-label">Approved</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Loan Table — all fields from Admin.viewLoanDetail() -->
+    <div class="dash-section">
+      <div class="table-responsive">
+        <table class="table eh-table">
+          <thead>
+            <tr>
+              <!-- Fields preserved from Admin.viewLoanDetail() -->
+              <th>Loan ID</th>
+              <th>Bank Name</th>
+              <th>Customer ID</th>
+              <th>Property ID</th>
+              <th>Loan Amount</th>
+              <th>Interest Rate</th>
+              <th>Tenure (Months)</th>
+              <th>EMI Amount</th>
+              <th>Loan Status</th>
+              <th>Sanction Date</th>
+              <th>Disbursement</th>
+              <th>Repayment Start</th>
+              <th>Created At</th>
+              <th>Updated At</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr th:each="loan : ${loans}">
+              <td th:text="${loan.loanId}"></td>
+              <td th:text="${loan.bankName}"></td>
+              <td th:text="${loan.customerId}"></td>
+              <td th:text="${loan.propertyId}"></td>
+              <td th:text="'₹' + ${#numbers.formatDecimal(loan.loanAmount, 0, 'COMMA', 0, 'POINT')}"></td>
+              <td th:text="${loan.interestRate} + '%'"></td>
+              <td th:text="${loan.tenureMonths}"></td>
+              <td class="fw-semibold" style="color:var(--gold)"
+                  th:text="'₹' + ${#numbers.formatDecimal(loan.emiAmount, 0, 'COMMA', 0, 'POINT')}"></td>
+              <td>
+                <span class="badge"
+                  th:classappend="${loan.loanStatus == 'Approved'} ? 'eh-badge-available' : 'eh-badge-pending'"
+                  th:text="${loan.loanStatus}"></span>
+              </td>
+              <td th:text="${loan.sanctionDate}"></td>
+              <td th:text="${loan.disbursementDate}"></td>
+              <td th:text="${loan.repaymentStartDate}"></td>
+              <td th:text="${loan.createdAt != null ? #temporals.format(loan.createdAt, 'dd-MM-yyyy HH:mm') : '-'}"></td>
+              <td th:text="${loan.updatedAt != null ? #temporals.format(loan.updatedAt, 'dd-MM-yyyy HH:mm') : '-'}"></td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(loans)}">
+              <td colspan="14" class="text-center text-muted py-5">
+                <div style="font-size:2rem">🏦</div>
+                <div class="mt-2">No loans found</div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</div>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

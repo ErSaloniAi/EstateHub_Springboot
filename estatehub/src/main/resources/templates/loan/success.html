@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Transaction Complete')}"></head>
+<body class="eh-body">
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+<div class="container py-5 mt-5 text-center" style="max-width:600px">
+  <div style="font-size:4rem">🏦✅</div>
+  <h2 class="mt-4 fw-bold">Transaction Complete!</h2>
+  <div th:if="${success}" class="alert eh-alert-success mt-3" th:text="${success}"></div>
+  <div th:if="${loan}" class="eh-card p-4 mt-3 text-start">
+    <h6 class="fw-semibold mb-3">Loan Details</h6>
+    <div class="row g-2">
+      <div class="col-6"><div class="text-muted small">Bank</div><div th:text="${loan.bankName}"></div></div>
+      <div class="col-6"><div class="text-muted small">Loan Amount</div><div th:text="'₹' + ${#numbers.formatDecimal(loan.loanAmount, 0, 'COMMA', 0, 'POINT')}"></div></div>
+      <div class="col-6"><div class="text-muted small">Interest Rate</div><div th:text="${loan.interestRate} + '%'"></div></div>
+      <div class="col-6"><div class="text-muted small">Tenure</div><div th:text="${loan.tenureMonths} + ' months'"></div></div>
+      <div class="col-12"><div class="text-muted small">Monthly EMI</div><div class="eh-price-total fw-bold" th:text="'₹' + ${#numbers.formatDecimal(loan.emiAmount, 0, 'COMMA', 0, 'POINT')}"></div></div>
+    </div>
+  </div>
+  <p class="text-muted mt-3">Loan details have been sent to your email.</p>
+  <a th:href="@{/dashboard}" class="btn eh-btn-solid mt-3">Back to Dashboard</a>
+</div>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

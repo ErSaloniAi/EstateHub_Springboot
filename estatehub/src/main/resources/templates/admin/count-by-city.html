@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Count by City')}"></head>
+<body class="eh-body">
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+<div class="dashboard-layout">
+  <aside th:replace="~{fragments/admin-sidebar :: adminSidebar('count')}"></aside>
+  <main class="dashboard-main">
+    <div class="dash-header">
+      <h1 class="dash-title">Property Count by City</h1>
+      <!-- dbms.countPropertiesByCity() — Admin menu option 8 -->
+      <div class="dash-sub text-muted">dbms.countPropertiesByCity() — CALL CountPropertiesByCity(?)</div>
+    </div>
+
+    <div class="row g-4">
+      <!-- Query Form -->
+      <div class="col-md-5">
+        <div class="eh-card p-4">
+          <h5 class="fw-semibold mb-3">Query City</h5>
+          <form th:action="@{/admin/count-by-city}" method="get">
+            <div class="mb-3">
+              <label class="form-label auth-label">Select City</label>
+              <select name="city" class="form-select eh-select" required>
+                <option value="">Choose a city...</option>
+                <option th:each="c : ${cities}" th:value="${c}"
+                        th:text="${#strings.capitalize(c)}"
+                        th:selected="${selectedCity == c}"></option>
+              </select>
+            </div>
+            <button type="submit" class="btn eh-btn-solid w-100">
+              <i class="bi bi-bar-chart me-2"></i>Get Count
+            </button>
+          </form>
+
+          <!-- Result -->
+          <div th:if="${count != null}" class="mt-4 text-center">
+            <div class="city-count-card">
+              <div class="cc-city" th:text="${#strings.capitalize(selectedCity)}"></div>
+              <div class="cc-count" th:text="${count}"></div>
+              <div class="text-muted small">properties</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- All Cities Summary -->
+      <div class="col-md-7">
+        <div class="eh-card p-4">
+          <h5 class="fw-semibold mb-3">All Cities Overview</h5>
+          <div class="row g-3">
+            <div class="col-6" th:each="c : ${cities}">
+              <a th:href="@{/admin/count-by-city(city=${c})}" class="city-count-card d-block text-decoration-none">
+                <div class="cc-city" th:text="${#strings.capitalize(c)}"></div>
+                <div class="cc-count">→</div>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

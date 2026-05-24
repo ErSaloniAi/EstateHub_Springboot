@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Admin Dashboard')}"></head>
+<body class="eh-body">
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+<div class="dashboard-layout">
+  <aside class="eh-sidebar">
+    <div class="sidebar-user">
+      <div class="sidebar-avatar" style="background:var(--gold)"><i class="bi bi-shield-fill text-dark"></i></div>
+      <div class="sidebar-name">Admin Panel</div>
+    </div>
+    <nav class="sidebar-nav">
+      <a th:href="@{/admin}" class="sidebar-link active"><i class="bi bi-speedometer2"></i> Dashboard</a>
+      <a th:href="@{/admin/admins}" class="sidebar-link"><i class="bi bi-people"></i> Manage Admins</a>
+      <a th:href="@{/admin/properties}" class="sidebar-link"><i class="bi bi-building"></i> Properties</a>
+      <a th:href="@{/admin/properties/add}" class="sidebar-link"><i class="bi bi-plus-circle"></i> Add Property</a>
+      <a th:href="@{/admin/sold}" class="sidebar-link"><i class="bi bi-bag-check"></i> Sold Properties</a>
+      <a th:href="@{/admin/committed}" class="sidebar-link"><i class="bi bi-clock-history"></i> Committed</a>
+      <a th:href="@{/admin/loans}" class="sidebar-link"><i class="bi bi-bank"></i> Loan Details</a>
+      <a th:href="@{/admin/count-by-city}" class="sidebar-link"><i class="bi bi-bar-chart"></i> Count by City</a>
+      <a th:href="@{/admin/contacts}" class="sidebar-link"><i class="bi bi-telephone"></i> Contacts</a>
+      <a th:href="@{/admin/customers}" class="sidebar-link"><i class="bi bi-person-lines-fill"></i> Customers</a>
+      <hr class="sidebar-divider"/>
+      <form th:action="@{/auth/logout}" method="post">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+        <button type="submit" class="sidebar-link sidebar-logout"><i class="bi bi-box-arrow-right"></i> Logout</button>
+      </form>
+    </nav>
+  </aside>
+
+  <main class="dashboard-main">
+    <div class="dash-header">
+      <h1 class="dash-title">Admin Dashboard</h1>
+      <div class="dash-sub text-muted">Welcome, Administrator</div>
+    </div>
+    <div th:if="${success}" class="alert eh-alert-success mb-4" th:text="${success}"></div>
+    <div th:if="${error}" class="alert eh-alert-error mb-4" th:text="${error}"></div>
+
+    <!-- Stats Grid -->
+    <div class="row g-3 mb-5">
+      <div class="col-md-4 col-6">
+        <div class="admin-stat-card">
+          <div class="asc-icon">👥</div>
+          <div class="asc-value" th:text="${analytics.totalCustomers()}">0</div>
+          <div class="asc-label">Total Customers</div>
+        </div>
+      </div>
+      <div class="col-md-4 col-6">
+        <div class="admin-stat-card">
+          <div class="asc-icon">🏠</div>
+          <div class="asc-value" th:text="${analytics.totalProperties()}">0</div>
+          <div class="asc-label">Total Properties</div>
+        </div>
+      </div>
+      <div class="col-md-4 col-6">
+        <div class="admin-stat-card">
+          <div class="asc-icon">✅</div>
+          <div class="asc-value" th:text="${analytics.soldProperties()}">0</div>
+          <div class="asc-label">Sold Properties</div>
+        </div>
+      </div>
+      <div class="col-md-4 col-6">
+        <div class="admin-stat-card">
+          <div class="asc-icon">🤝</div>
+          <div class="asc-value" th:text="${analytics.committedProperties()}">0</div>
+          <div class="asc-label">Committed</div>
+        </div>
+      </div>
+      <div class="col-md-4 col-6">
+        <div class="admin-stat-card">
+          <div class="asc-icon">🏦</div>
+          <div class="asc-value" th:text="${analytics.totalLoans()}">0</div>
+          <div class="asc-label">Total Loans</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- City Counts — dbms.countPropertiesByCity() -->
+    <div class="dash-section">
+      <h5 class="dash-section-title">Properties by City</h5>
+      <div class="row g-3">
+        <div class="col"><div class="city-count-card"><div class="cc-city">Ahmedabad</div><div class="cc-count" th:text="${analytics.ahmedabadCount()}">0</div></div></div>
+        <div class="col"><div class="city-count-card"><div class="cc-city">Rajkot</div><div class="cc-count" th:text="${analytics.rajkotCount()}">0</div></div></div>
+        <div class="col"><div class="city-count-card"><div class="cc-city">Surat</div><div class="cc-count" th:text="${analytics.suratCount()}">0</div></div></div>
+        <div class="col"><div class="city-count-card"><div class="cc-city">Vadodara</div><div class="cc-count" th:text="${analytics.vadodaraCount()}">0</div></div></div>
+        <div class="col"><div class="city-count-card"><div class="cc-city">Bhavnagar</div><div class="cc-count" th:text="${analytics.bhavnagarCount()}">0</div></div></div>
+      </div>
+    </div>
+
+    <!-- Quick Links -->
+    <div class="dash-section mt-4">
+      <h5 class="dash-section-title">Quick Actions</h5>
+      <div class="row g-3">
+        <div class="col-md-3 col-6"><a th:href="@{/admin/properties/add}" class="dash-action-card"><div class="dac-icon">➕</div><div class="dac-label">Add Property</div></a></div>
+        <div class="col-md-3 col-6"><a th:href="@{/admin/sold}" class="dash-action-card"><div class="dac-icon">📋</div><div class="dac-label">Sold Properties</div></a></div>
+        <div class="col-md-3 col-6"><a th:href="@{/admin/loans}" class="dash-action-card"><div class="dac-icon">🏦</div><div class="dac-label">View Loans</div></a></div>
+        <div class="col-md-3 col-6"><a th:href="@{/admin/customers}" class="dash-action-card"><div class="dac-icon">👤</div><div class="dac-label">Customers</div></a></div>
+      </div>
+    </div>
+  </main>
+</div>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('Dashboard')}"></head>
+<body class="eh-body">
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+<div class="dashboard-layout">
+  <!-- Sidebar -->
+  <aside class="eh-sidebar">
+    <div class="sidebar-user">
+      <div class="sidebar-avatar">
+        <i class="bi bi-person-circle"></i>
+      </div>
+      <div class="sidebar-name" th:text="${customer?.cName ?: 'User'}">User</div>
+      <div class="sidebar-email text-muted small" sec:authentication="name">email</div>
+    </div>
+    <nav class="sidebar-nav">
+      <a th:href="@{/dashboard}" class="sidebar-link active"><i class="bi bi-grid"></i> Dashboard</a>
+      <a th:href="@{/dashboard/profile}" class="sidebar-link"><i class="bi bi-person"></i> My Profile</a>
+      <a th:href="@{/buyer/browse}" class="sidebar-link"><i class="bi bi-search"></i> Browse Properties</a>
+      <a th:href="@{/seller/list-property}" class="sidebar-link"><i class="bi bi-plus-circle"></i> List Property</a>
+      <a th:href="@{/seller/my-listings}" class="sidebar-link"><i class="bi bi-building"></i> My Listings</a>
+      <hr class="sidebar-divider"/>
+      <form th:action="@{/auth/logout}" method="post">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+        <button type="submit" class="sidebar-link sidebar-logout"><i class="bi bi-box-arrow-right"></i> Logout</button>
+      </form>
+    </nav>
+  </aside>
+
+  <!-- Main -->
+  <main class="dashboard-main">
+    <div class="dash-header">
+      <h1 class="dash-title">Dashboard</h1>
+      <div class="dash-sub text-muted" th:text="'Welcome back, ' + (${customer?.cName} ?: 'User') + '!'"></div>
+    </div>
+
+    <div th:if="${success}" class="alert eh-alert-success mb-4" th:text="${success}"></div>
+    <div th:if="${error}" class="alert eh-alert-error mb-4" th:text="${error}"></div>
+
+    <!-- Quick Actions -->
+    <div class="row g-3 mb-4">
+      <div class="col-md-3 col-6">
+        <a th:href="@{/buyer/browse}" class="dash-action-card">
+          <div class="dac-icon">🔍</div>
+          <div class="dac-label">Browse</div>
+        </a>
+      </div>
+      <div class="col-md-3 col-6">
+        <a th:href="@{/seller/list-property}" class="dash-action-card">
+          <div class="dac-icon">🏠</div>
+          <div class="dac-label">List Property</div>
+        </a>
+      </div>
+      <div class="col-md-3 col-6">
+        <a th:href="@{/dashboard/profile}" class="dash-action-card">
+          <div class="dac-icon">👤</div>
+          <div class="dac-label">Profile</div>
+        </a>
+      </div>
+      <div class="col-md-3 col-6">
+        <a th:href="@{/properties/list}" class="dash-action-card">
+          <div class="dac-icon">🏙️</div>
+          <div class="dac-label">All Properties</div>
+        </a>
+      </div>
+    </div>
+
+    <!-- Recent Purchases -->
+    <div class="dash-section">
+      <h5 class="dash-section-title">My Purchases</h5>
+      <div th:if="${not #lists.isEmpty(purchases)}">
+        <div class="table-responsive">
+          <table class="table eh-table">
+            <thead><tr>
+              <th>City</th><th>Property</th><th>Address</th><th>Price</th><th>Status</th>
+            </tr></thead>
+            <tbody>
+              <tr th:each="p : ${purchases}">
+                <td th:text="${#strings.capitalize(p.cityName)}"></td>
+                <td th:text="${#strings.capitalize(p.rName)}"></td>
+                <td th:text="${p.rAddress}"></td>
+                <td th:text="'₹' + ${#numbers.formatDecimal(p.rPrice, 0, 'COMMA', 0, 'POINT')}"></td>
+                <td><span class="badge eh-badge-sold">Purchased</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div th:if="${#lists.isEmpty(purchases)}" class="text-center py-4 text-muted">
+        <div style="font-size:2rem">🛒</div>
+        <p class="mt-2">No purchases yet. <a th:href="@{/buyer/browse}">Browse properties</a></p>
+      </div>
+    </div>
+
+    <!-- My Loans -->
+    <div class="dash-section mt-4">
+      <h5 class="dash-section-title">My Loans</h5>
+      <div th:if="${not #lists.isEmpty(loans)}">
+        <div class="table-responsive">
+          <table class="table eh-table">
+            <thead><tr>
+              <th>Bank</th><th>Amount</th><th>EMI</th><th>Tenure</th><th>Status</th>
+            </tr></thead>
+            <tbody>
+              <tr th:each="l : ${loans}">
+                <td th:text="${l.bankName}"></td>
+                <td th:text="'₹' + ${#numbers.formatDecimal(l.loanAmount, 0, 'COMMA', 0, 'POINT')}"></td>
+                <td th:text="'₹' + ${#numbers.formatDecimal(l.emiAmount, 0, 'COMMA', 0, 'POINT')} + '/mo'"></td>
+                <td th:text="${l.tenureMonths} + ' months'"></td>
+                <td><span class="badge eh-badge-pending" th:text="${l.loanStatus}">Pending</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div th:if="${#lists.isEmpty(loans)}" class="text-center py-4 text-muted">
+        <div style="font-size:2rem">🏦</div>
+        <p class="mt-2">No loans yet.</p>
+      </div>
+    </div>
+  </main>
+</div>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

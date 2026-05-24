@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('Properties')}"></head>
+<body class="eh-body">
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+<div class="page-hero-sm">
+  <div class="container">
+    <h1 class="page-hero-title">Properties</h1>
+    <p class="text-muted">Browse all available properties across Gujarat</p>
+  </div>
+</div>
+
+<div class="container py-5">
+  <!-- Filter Bar -->
+  <div class="eh-filter-bar mb-4">
+    <form th:action="@{/properties/list}" method="get" class="row g-2 align-items-end">
+      <div class="col-md-2">
+        <label class="form-label auth-label">City</label>
+        <select name="city" class="form-select eh-select">
+          <option value="">All Cities</option>
+          <option th:each="c : ${cities}" th:value="${c}"
+                  th:text="${#strings.capitalize(c)}"
+                  th:selected="${selectedCity == c}"></option>
+        </select>
+      </div>
+      <div class="col-md-2">
+        <label class="form-label auth-label">Type</label>
+        <select name="type" class="form-select eh-select">
+          <option value="">All Types</option>
+          <optgroup label="Residential">
+            <option th:each="t : ${residentialTypes}" th:value="${t}"
+                    th:text="${#strings.capitalize(t)}"
+                    th:selected="${selectedType == t}"></option>
+          </optgroup>
+          <optgroup label="Commercial">
+            <option th:each="t : ${commercialTypes}" th:value="${t}"
+                    th:text="${t}"
+                    th:selected="${selectedType == t}"></option>
+          </optgroup>
+          <optgroup label="Industrial">
+            <option th:each="t : ${industrialTypes}" th:value="${t}"
+                    th:text="${#strings.capitalize(t)}"
+                    th:selected="${selectedType == t}"></option>
+          </optgroup>
+        </select>
+      </div>
+      <div class="col-md-3">
+        <label class="form-label auth-label">Max Price (₹)</label>
+        <input type="number" name="maxPrice" class="form-control eh-input"
+               th:value="${maxPrice}" placeholder="e.g. 5000000"/>
+      </div>
+      <div class="col-md-2">
+        <button type="submit" class="btn eh-btn-solid w-100">
+          <i class="bi bi-search me-1"></i>Search
+        </button>
+      </div>
+      <div class="col-md-2">
+        <a th:href="@{/properties/list}" class="btn eh-btn-ghost w-100">Clear</a>
+      </div>
+    </form>
+  </div>
+
+  <!-- Results count -->
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <div class="text-muted small"
+         th:text="${#lists.size(properties)} + ' properties found'"></div>
+  </div>
+
+  <!-- Grid -->
+  <div class="row g-4" th:if="${not #lists.isEmpty(properties)}">
+    <div class="col-md-6 col-xl-4" th:each="prop : ${properties}">
+      <div class="eh-property-card">
+        <div class="property-img-wrap">
+          <div class="property-img-placeholder">
+            <span th:switch="${prop.rName?.toLowerCase()}">
+              <span th:case="'flat'">🏢</span>
+              <span th:case="'bungalow'">🏡</span>
+              <span th:case="'villa'">🏰</span>
+              <span th:case="'office'">🏢</span>
+              <span th:case="'warehouse'">🏭</span>
+              <span th:case="*">🏠</span>
+            </span>
+          </div>
+          <div class="property-badge" th:text="${#strings.capitalize(prop.rName)}"></div>
+          <div class="property-city-badge" th:text="${#strings.capitalize(prop.cityName)}"></div>
+        </div>
+        <div class="property-body">
+          <div class="property-price" th:text="'₹' + ${#numbers.formatDecimal(prop.rPrice, 0, 'COMMA', 0, 'POINT')}"></div>
+          <div class="property-name" th:text="${#strings.capitalize(prop.rName) + ' — ' + #strings.capitalize(prop.cityName)}"></div>
+          <div class="property-address text-muted small" th:text="${prop.rAddress}"></div>
+          <div class="property-meta mt-2 d-flex gap-3 text-muted small">
+            <span th:if="${prop.rArea}"><i class="bi bi-arrows-angle-expand me-1"></i><span th:text="${prop.rArea}"></span></span>
+            <span class="ms-auto">
+              <span class="status-dot available" th:if="${prop.status == 'available'}">Available</span>
+              <span class="status-dot sold" th:if="${prop.status == 'sold'}">Sold</span>
+              <span class="status-dot committed" th:if="${prop.status == 'committed'}">Committed</span>
+            </span>
+          </div>
+          <a th:href="@{/properties/view/{id}(id=${prop.rId})}"
+             class="btn eh-card-btn w-100 mt-3">View Details</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div th:if="${#lists.isEmpty(properties)}" class="text-center py-5">
+    <div style="font-size:4rem">🔍</div>
+    <h4 class="mt-3">No properties found</h4>
+    <p class="text-muted">Try adjusting your filters</p>
+    <a th:href="@{/properties/list}" class="btn eh-btn-outline-dark mt-2">Show All</a>
+  </div>
+</div>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

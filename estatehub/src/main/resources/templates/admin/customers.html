@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Customers')}"></head>
+<body class="eh-body">
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+<div class="dashboard-layout">
+  <aside th:replace="~{fragments/admin-sidebar :: adminSidebar('customers')}"></aside>
+  <main class="dashboard-main">
+    <div class="dash-header">
+      <h1 class="dash-title">All Customers</h1>
+      <div class="dash-sub text-muted">SELECT * FROM customer</div>
+    </div>
+
+    <div class="dash-section">
+      <div class="table-responsive">
+        <table class="table eh-table">
+          <thead>
+            <tr>
+              <th>ID</th><th>Name</th><th>Email</th><th>Phone</th>
+              <th>City</th><th>State</th><th>Age</th><th>Occupation</th>
+              <th>Income</th><th>Type</th><th>Verified</th><th>Joined</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr th:each="c : ${customers}">
+              <td th:text="${c.customerId}"></td>
+              <td th:text="${c.cName}"></td>
+              <td th:text="${c.cEmail}"></td>
+              <td th:text="${c.cPhone}"></td>
+              <td th:text="${c.cCity ?: '-'}"></td>
+              <!-- state defaults to "Gujarat" — preserved from Customer.customer_details() -->
+              <td th:text="${c.cState ?: 'Gujarat'}"></td>
+              <!-- age defaults to 25 — preserved from Customer.customer_details() -->
+              <td th:text="${c.cAge ?: 25}"></td>
+              <td th:text="${c.cOccupation ?: '-'}"></td>
+              <td th:text="${c.cIncome != null ? '₹' + #numbers.formatDecimal(c.cIncome, 0, 'COMMA', 0, 'POINT') : '-'}"></td>
+              <td>
+                <span class="badge"
+                  th:classappend="${c.type == 'buyer'} ? 'eh-badge-available' : 'eh-badge-pending'"
+                  th:text="${c.type ?: '-'}"></span>
+              </td>
+              <td>
+                <span th:if="${c.emailVerified}" class="text-success fw-semibold">✓ Yes</span>
+                <span th:unless="${c.emailVerified}" class="text-danger">✗ No</span>
+              </td>
+              <td th:text="${c.createdAt != null ? #temporals.format(c.createdAt, 'dd-MM-yyyy') : '-'}"></td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(customers)}">
+              <td colspan="12" class="text-center text-muted py-5">
+                <div style="font-size:2rem">👥</div>
+                <div class="mt-2">No customers registered yet</div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</div>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

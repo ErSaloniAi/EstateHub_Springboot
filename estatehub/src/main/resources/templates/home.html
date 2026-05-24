@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('Home')}"></head>
+<body class="eh-body">
+
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+<!-- ═══════════════════ HERO ═══════════════════ -->
+<section class="eh-hero">
+  <div class="hero-bg-grid"></div>
+  <div class="container hero-content">
+    <div class="row align-items-center min-vh-100">
+      <div class="col-lg-7 py-5">
+        <div class="hero-eyebrow">Gujarat's #1 Real Estate Platform</div>
+        <h1 class="hero-title">Find Your <br><em>Perfect</em> Property</h1>
+        <p class="hero-sub">Residential · Commercial · Industrial<br>Across 5 major cities in Gujarat</p>
+
+        <!-- Search Bar -->
+        <form th:action="@{/properties/list}" method="get" class="hero-search-bar mt-4">
+          <div class="row g-2">
+            <div class="col-md-4">
+              <select name="city" class="form-select eh-select">
+                <option value="">All Cities</option>
+                <option th:each="city : ${cities}" th:value="${city}" th:text="${#strings.capitalize(city)}"></option>
+              </select>
+            </div>
+            <div class="col-md-4">
+              <select name="category" class="form-select eh-select">
+                <option value="">All Categories</option>
+                <option value="Residential">Residential</option>
+                <option value="Commercial">Commercial</option>
+                <option value="Industrial">Industrial</option>
+              </select>
+            </div>
+            <div class="col-md-4">
+              <button type="submit" class="btn eh-hero-btn w-100">
+                <i class="bi bi-search me-2"></i>Search
+              </button>
+            </div>
+          </div>
+        </form>
+
+        <div class="hero-stats mt-5 d-flex gap-4 flex-wrap">
+          <div class="stat-pill"><span class="stat-num">5</span><span class="stat-label">Cities</span></div>
+          <div class="stat-pill"><span class="stat-num">3</span><span class="stat-label">Banks</span></div>
+          <div class="stat-pill"><span class="stat-num">∞</span><span class="stat-label">Properties</span></div>
+        </div>
+      </div>
+
+      <div class="col-lg-5 d-none d-lg-block">
+        <div class="hero-visual">
+          <div class="hero-card-float card-1">
+            <div class="hc-icon">🏠</div>
+            <div class="hc-label">Residential</div>
+            <div class="hc-types">Flat · Bungalow · Villa</div>
+          </div>
+          <div class="hero-card-float card-2">
+            <div class="hc-icon">🏢</div>
+            <div class="hc-label">Commercial</div>
+            <div class="hc-types">Office · Shop · Showroom</div>
+          </div>
+          <div class="hero-card-float card-3">
+            <div class="hc-icon">🏭</div>
+            <div class="hc-label">Industrial</div>
+            <div class="hc-types">Warehouse · Factory</div>
+          </div>
+          <div class="hero-orb"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scroll indicator -->
+  <div class="hero-scroll-hint">
+    <span>Scroll</span>
+    <div class="scroll-line"></div>
+  </div>
+</section>
+
+<!-- ═══════════════════ CITIES STRIP ═══════════════════ -->
+<section class="cities-strip py-4">
+  <div class="container">
+    <div class="d-flex gap-3 flex-wrap justify-content-center">
+      <a th:each="city : ${cities}" th:href="@{/properties/list(city=${city})}"
+         class="city-chip" th:text="${#strings.capitalize(city)}"></a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ FEATURED PROPERTIES ═══════════════════ -->
+<section class="featured-section py-5">
+  <div class="container">
+    <div class="section-header mb-5">
+      <div class="section-eyebrow">Available Now</div>
+      <h2 class="section-title">Featured Properties</h2>
+    </div>
+
+    <div class="row g-4" th:if="${not #lists.isEmpty(featuredProperties)}">
+      <div class="col-md-6 col-xl-4" th:each="prop : ${featuredProperties}">
+        <div class="eh-property-card">
+          <div class="property-img-wrap">
+            <div class="property-img-placeholder">
+              <span th:switch="${prop.rName?.toLowerCase()}">
+                <span th:case="'flat'">🏢</span>
+                <span th:case="'bungalow'">🏡</span>
+                <span th:case="'villa'">🏰</span>
+                <span th:case="'tenement'">🏘️</span>
+                <span th:case="*">🏠</span>
+              </span>
+            </div>
+            <div class="property-badge" th:text="${#strings.capitalize(prop.rName)}">Flat</div>
+            <div class="property-city-badge" th:text="${#strings.capitalize(prop.cityName)}">City</div>
+          </div>
+          <div class="property-body">
+            <div class="property-price" th:text="'₹' + ${#numbers.formatDecimal(prop.rPrice, 0, 'COMMA', 0, 'POINT')}">₹0</div>
+            <div class="property-name" th:text="${#strings.capitalize(prop.rName)} + ' in ' + ${#strings.capitalize(prop.cityName)}"></div>
+            <div class="property-address text-muted small" th:text="${prop.rAddress}"></div>
+            <div class="property-meta mt-2 d-flex gap-3 text-muted small">
+              <span><i class="bi bi-arrows-angle-expand me-1"></i><span th:text="${prop.rArea}"></span></span>
+            </div>
+            <div class="property-facility text-muted small mt-1" th:if="${prop.rFacility}">
+              <i class="bi bi-star me-1"></i>
+              <span th:text="${#strings.abbreviate(prop.rFacility, 50)}"></span>
+            </div>
+            <a th:href="@{/properties/view/{id}(id=${prop.rId})}"
+               class="btn eh-card-btn w-100 mt-3">View Details</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div th:if="${#lists.isEmpty(featuredProperties)}" class="text-center py-5">
+      <div style="font-size:4rem">🏗️</div>
+      <h4 class="mt-3 text-muted">No properties listed yet</h4>
+      <p class="text-muted">Be the first to list your property!</p>
+      <a th:href="@{/seller/list-property}" class="btn eh-btn-solid mt-2">List Property</a>
+    </div>
+
+    <div class="text-center mt-5">
+      <a th:href="@{/properties/list}" class="btn eh-btn-outline-dark px-5">View All Properties</a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ HOW IT WORKS ═══════════════════ -->
+<section class="how-section py-5">
+  <div class="container">
+    <div class="section-header mb-5 text-center">
+      <div class="section-eyebrow">Simple Process</div>
+      <h2 class="section-title">How EstateHub Works</h2>
+    </div>
+    <div class="row g-4 justify-content-center">
+      <div class="col-md-3 text-center">
+        <div class="how-step">
+          <div class="how-num">01</div>
+          <div class="how-icon">🔍</div>
+          <h5>Search</h5>
+          <p class="text-muted small">Browse properties across 5 Gujarat cities by type, budget & category</p>
+        </div>
+      </div>
+      <div class="col-md-3 text-center">
+        <div class="how-step">
+          <div class="how-num">02</div>
+          <div class="how-icon">🏦</div>
+          <h5>Finance</h5>
+          <p class="text-muted small">Choose from 3 banks: Saurastra (8.75%), HDFC (9.75%), Karnavati (8.95%)</p>
+        </div>
+      </div>
+      <div class="col-md-3 text-center">
+        <div class="how-step">
+          <div class="how-num">03</div>
+          <div class="how-icon">✅</div>
+          <h5>Purchase</h5>
+          <p class="text-muted small">Complete your purchase with 1.5% brokerage and get instant confirmation</p>
+        </div>
+      </div>
+      <div class="col-md-3 text-center">
+        <div class="how-step">
+          <div class="how-num">04</div>
+          <div class="how-icon">📧</div>
+          <h5>Confirmation</h5>
+          <p class="text-muted small">Receive full property & loan details via email from EstateHub</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ CTA ═══════════════════ -->
+<section class="cta-section py-5 my-4">
+  <div class="container">
+    <div class="cta-box text-center">
+      <h2 class="cta-title">Ready to Find Your Dream Property?</h2>
+      <p class="cta-sub text-muted">Join thousands of buyers and sellers on Gujarat's premier platform</p>
+      <div class="d-flex gap-3 justify-content-center mt-4 flex-wrap">
+        <a th:href="@{/auth/register}" class="btn eh-btn-solid px-5">Get Started</a>
+        <a th:href="@{/properties/list}" class="btn eh-btn-outline-dark px-5">Browse Properties</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

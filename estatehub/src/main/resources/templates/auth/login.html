@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Login')}"></head>
+<body class="eh-body auth-body">
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+<div class="auth-wrapper">
+  <div class="auth-card">
+    <div class="auth-logo">
+      <a th:href="@{/}" class="eh-brand text-decoration-none">
+        <span class="brand-icon">⬡</span>
+        <span class="brand-text">ESTATE<strong>HUB</strong></span>
+      </a>
+    </div>
+    <h2 class="auth-title">Welcome back</h2>
+    <p class="auth-sub text-muted">Login with your Gmail account</p>
+
+    <div th:if="${error}" class="alert eh-alert-error" th:text="${error}"></div>
+    <div th:if="${message}" class="alert eh-alert-success" th:text="${message}"></div>
+    <div th:if="${success}" class="alert eh-alert-success" th:text="${success}"></div>
+
+    <form th:action="@{/auth/login-process}" method="post" class="auth-form">
+      <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+
+      <div class="mb-3">
+        <label class="form-label auth-label">Gmail Address</label>
+        <div class="input-group eh-input-group">
+          <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+          <input type="email" name="username" class="form-control eh-input"
+                 placeholder="yourname@gmail.com" required/>
+        </div>
+        <div class="form-hint">Must end with @gmail.com</div>
+      </div>
+
+      <div class="mb-4">
+        <label class="form-label auth-label d-flex justify-content-between">
+          <span>Password</span>
+          <a th:href="@{/auth/forgot-password}" class="auth-link">Forgot password?</a>
+        </label>
+        <div class="input-group eh-input-group">
+          <span class="input-group-text"><i class="bi bi-lock"></i></span>
+          <input type="password" name="password" id="loginPass" class="form-control eh-input"
+                 placeholder="••••••••" required/>
+          <button type="button" class="input-group-text toggle-pass" onclick="togglePass('loginPass')">
+            <i class="bi bi-eye"></i>
+          </button>
+        </div>
+      </div>
+
+      <button type="submit" class="btn eh-btn-solid w-100 auth-submit">Login</button>
+    </form>
+
+    <div class="auth-divider"><span>New to EstateHub?</span></div>
+    <a th:href="@{/auth/register}" class="btn eh-btn-outline-dark w-100">Create Account</a>
+  </div>
+</div>
+<script>
+function togglePass(id) {
+  const el = document.getElementById(id);
+  el.type = el.type === 'password' ? 'text' : 'password';
+}
+</script>
+</body>
+</html>

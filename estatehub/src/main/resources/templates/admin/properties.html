@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Manage Properties')}"></head>
+<body class="eh-body">
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+<div class="dashboard-layout">
+  <aside th:replace="~{fragments/admin-sidebar :: adminSidebar('properties')}"></aside>
+  <main class="dashboard-main">
+    <div class="dash-header">
+      <h1 class="dash-title">All Properties</h1>
+      <div class="dash-sub text-muted">Manage, view and delete properties</div>
+    </div>
+    <div th:if="${success}" class="alert eh-alert-success mb-3" th:text="${success}"></div>
+    <div th:if="${error}" class="alert eh-alert-error mb-3" th:text="${error}"></div>
+
+    <!-- Delete Property Form — Admin.deleteProperty() -->
+    <div class="eh-card p-4 mb-4">
+      <h6 class="fw-semibold mb-3"><i class="bi bi-trash me-2 text-danger"></i>Delete Property — Admin.deleteProperty()</h6>
+      <form th:action="@{/admin/properties/delete}" method="post" class="row g-2 align-items-end">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+        <div class="col-md-4">
+          <label class="form-label auth-label">City</label>
+          <select name="city" class="form-select eh-select" required>
+            <option th:each="c : ${cities}" th:value="${c}" th:text="${#strings.capitalize(c)}"></option>
+          </select>
+        </div>
+        <div class="col-md-4">
+          <label class="form-label auth-label">Property ID</label>
+          <input type="number" name="rId" class="form-control eh-input" placeholder="Enter Property ID" required/>
+        </div>
+        <div class="col-md-3">
+          <button type="submit" class="btn btn-danger w-100"
+                  onclick="return confirm('Delete this property permanently?')">
+            <i class="bi bi-trash me-1"></i>Delete
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Properties Table -->
+    <div class="dash-section">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5 class="dash-section-title mb-0">All Properties (<span th:text="${#lists.size(properties)}">0</span>)</h5>
+        <a th:href="@{/admin/properties/add}" class="btn eh-btn-solid btn-sm">
+          <i class="bi bi-plus me-1"></i>Add New
+        </a>
+      </div>
+      <div class="table-responsive">
+        <table class="table eh-table">
+          <thead>
+            <tr>
+              <th>ID</th><th>Name</th><th>City</th><th>Category</th>
+              <th>Address</th><th>Price</th><th>Area</th><th>Status</th><th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr th:each="p : ${properties}">
+              <td th:text="${p.rId}"></td>
+              <td th:text="${#strings.capitalize(p.rName)}"></td>
+              <td th:text="${#strings.capitalize(p.cityName ?: '-')}"></td>
+              <td th:text="${p.propertyCategory ?: '-'}"></td>
+              <td th:text="${#strings.abbreviate(p.rAddress ?: '-', 30)}"></td>
+              <td th:text="'₹' + ${#numbers.formatDecimal(p.rPrice ?: 0, 0, 'COMMA', 0, 'POINT')}"></td>
+              <td th:text="${p.rArea ?: '-'}"></td>
+              <td>
+                <span class="badge"
+                  th:classappend="${p.status == 'available'} ? 'eh-badge-available' : (${p.status == 'sold'} ? 'eh-badge-sold' : 'eh-badge-pending')"
+                  th:text="${#strings.capitalize(p.status ?: 'unknown')}"></span>
+              </td>
+              <td>
+                <a th:href="@{/properties/view/{id}(id=${p.rId})}" class="btn btn-sm eh-btn-ghost">View</a>
+              </td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(properties)}">
+              <td colspan="9" class="text-center text-muted py-4">No properties found</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</div>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+</body>
+</html>

@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Choose Transaction')}"></head>
+<body class="eh-body">
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+<div class="page-hero-sm">
+  <div class="container">
+    <h1 class="page-hero-title">Finance Options</h1>
+    <p class="text-muted">Choose Loan or POA transaction</p>
+  </div>
+</div>
+<div class="container py-5" style="max-width:700px">
+  <div th:if="${error}" class="alert eh-alert-error mb-4" th:text="${error}"></div>
+
+  <!-- Property Summary -->
+  <div class="eh-card p-4 mb-4" th:if="${property}">
+    <h6 class="fw-semibold mb-3">Selected Property</h6>
+    <div class="row">
+      <div class="col-6">
+        <div class="text-muted small">Type</div>
+        <div class="fw-semibold" th:text="${#strings.capitalize(property.rName)}"></div>
+      </div>
+      <div class="col-6">
+        <div class="text-muted small">City</div>
+        <div class="fw-semibold" th:text="${#strings.capitalize(property.cityName)}"></div>
+      </div>
+      <div class="col-6 mt-2">
+        <div class="text-muted small">Price</div>
+        <div class="fw-semibold" th:text="'₹' + ${#numbers.formatDecimal(property.rPrice, 0, 'COMMA', 0, 'POINT')}"></div>
+      </div>
+      <div class="col-6 mt-2">
+        <div class="text-muted small">Total (incl. 1.5% brokerage)</div>
+        <div class="eh-price-total fw-bold"
+             th:text="'₹' + ${#numbers.formatDecimal(property.rPrice * 1.015, 0, 'COMMA', 0, 'POINT')}"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Transaction Tabs -->
+  <ul class="nav nav-tabs eh-tabs mb-4" id="txnTabs">
+    <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#loanTab">🏦 Bank Loan</button></li>
+    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#poaTab">💵 POA (Cash)</button></li>
+  </ul>
+
+  <div class="tab-content">
+    <!-- LOAN TAB — Loan.createLoan() -->
+    <div class="tab-pane fade show active" id="loanTab">
+      <div class="eh-card p-4">
+        <h5 class="fw-semibold mb-3">Apply for Bank Loan</h5>
+        <form th:action="@{/loan/create}" method="post">
+          <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+          <input type="hidden" name="propertyId" th:value="${propertyId}"/>
+          <input type="hidden" name="cityName" th:value="${property?.cityName}"/>
+
+          <div class="mb-3">
+            <label class="form-label auth-label">Select Bank *</label>
+            <!-- Banks from Loan.createLoan() -->
+            <div class="bank-options">
+              <label class="bank-option">
+                <input type="radio" name="bankChoice" value="1" required/>
+                <div class="bank-card">
+                  <div class="bank-name">Saurastra Bank</div>
+                  <div class="bank-rate">8.75% p.a.</div>
+                </div>
+              </label>
+              <label class="bank-option">
+                <input type="radio" name="bankChoice" value="2"/>
+                <div class="bank-card">
+                  <div class="bank-name">HDFC Bank</div>
+                  <div class="bank-rate">9.75% p.a.</div>
+                </div>
+              </label>
+              <label class="bank-option">
+                <input type="radio" name="bankChoice" value="3"/>
+                <div class="bank-card">
+                  <div class="bank-name">Karnavati Bank</div>
+                  <div class="bank-rate">8.95% p.a.</div>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label auth-label">Tenure (Months) *</label>
+            <input type="number" name="tenureMonths" id="tenureInput" class="form-control eh-input"
+                   placeholder="e.g. 120 (10 years)" min="1" max="360" required oninput="calcEMI()"/>
+          </div>
+
+          <!-- EMI Preview — mirrors Loan.createLoan() EMI formula -->
+          <div class="emi-preview eh-card p-3 mb-3" id="emiPreview" style="display:none">
+            <div class="text-muted small mb-1">Estimated Monthly EMI</div>
+            <div class="emi-amount" id="emiAmount">₹0</div>
+            <div class="text-muted small" id="emiBreakdown"></div>
+          </div>
+
+          <button type="submit" class="btn eh-btn-solid w-100">Apply for Loan</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- POA TAB — POA.poa() -->
+    <div class="tab-pane fade" id="poaTab">
+      <div class="eh-card p-4">
+        <h5 class="fw-semibold mb-3">Power of Attorney (Cash Payment)</h5>
+        <div class="alert eh-alert-info" th:if="${property}">
+          Total payable amount (including 1.5% brokerage):
+          <strong th:text="'₹' + ${#numbers.formatDecimal(property.rPrice * 1.015, 0, 'COMMA', 0, 'POINT')}"></strong>
+        </div>
+        <form th:action="@{/loan/poa}" method="post">
+          <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+          <input type="hidden" name="propertyId" th:value="${propertyId}"/>
+          <div class="mb-3">
+            <label class="form-label auth-label">Enter Payment Amount (₹) *</label>
+            <input type="number" name="amountPaid" class="form-control eh-input"
+                   th:placeholder="${property != null ? (int)(property.rPrice * 1.015) : 0}"
+                   required step="1"/>
+            <div class="form-hint">Must match exact total amount shown above</div>
+          </div>
+          <button type="submit" class="btn eh-btn-solid w-100">Confirm POA Payment</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<script th:inline="javascript">
+  const propertyPrice = /*[[${property?.rPrice ?: 0}]]*/ 0;
+  const totalAmount = propertyPrice * 1.015;
+
+  // EMI Calculator — mirrors Loan.createLoan() formula exactly:
+  // monthlyRate = (interestRate / 100) / 12
+  // emiAmount = (totalAmount * monthlyRate * Math.pow(1+monthlyRate, n)) / (Math.pow(1+monthlyRate, n) - 1)
+  function calcEMI() {
+    const tenure = parseInt(document.getElementById('tenureInput').value);
+    const selectedBank = document.querySelector('input[name="bankChoice"]:checked');
+    if (!tenure || !selectedBank) return;
+    const rates = {'1': 8.75, '2': 9.75, '3': 8.95};
+    const interestRate = rates[selectedBank.value];
+    const monthlyRate = (interestRate / 100) / 12;
+    const emi = (totalAmount * monthlyRate * Math.pow(1 + monthlyRate, tenure)) /
+                (Math.pow(1 + monthlyRate, tenure) - 1);
+    document.getElementById('emiAmount').textContent = '₹' + Math.round(emi).toLocaleString('en-IN');
+    document.getElementById('emiBreakdown').textContent =
+      `Bank: ${selectedBank.value == 1 ? 'Saurastra' : selectedBank.value == 2 ? 'HDFC' : 'Karnavati'} | Rate: ${interestRate}% | Tenure: ${tenure} months`;
+    document.getElementById('emiPreview').style.display = 'block';
+  }
+
+  document.querySelectorAll('input[name="bankChoice"]').forEach(r => r.addEventListener('change', calcEMI));
+</script>
+</body>
+</html>
